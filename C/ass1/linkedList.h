@@ -7,10 +7,11 @@ typedef struct node{
 
 node* head;
 node* search;
+int n=0;
 void createList(){
 
 	node* temp;
-	int n,data;
+	int data;
 	printf("give list number:");
 	scanf("%d",&n);
 	if(n==0){
@@ -110,6 +111,7 @@ void inFirst(){
 		head->next=newnode;
 		printf("\ninserted\n");
 	}
+	n++;
 }
 
 void inLast(){
@@ -136,6 +138,7 @@ void inLast(){
 		printf("\ninserted\n");
 	}
 	display();
+	n++;
 }
 
 void inPos(){
@@ -163,7 +166,7 @@ void inPos(){
 	newnode->data=key;
 	search->next=newnode;
 	newnode->next=temp;
-	
+	n++;
 }
 
 
@@ -182,7 +185,7 @@ void delFirst(){
 	head->next=temp->next;
 	temp->next=NULL;
 	free(temp);
-	
+	n--;
 }
 
 void delLast(){
@@ -203,7 +206,7 @@ void delLast(){
 	node* temp1=temp->next;
 	temp->next=NULL;
 	free(temp1);
-	
+	n--;
 }
 
 void delPos(){
@@ -223,24 +226,102 @@ void delPos(){
 	search->next=temp->next;
 	temp->next=NULL;
 	free(temp);
+	n--;
+}
+// 1 2 3 4 5->null
+// prev curr ahead
+/*
+	1		2	 3		4		5
+	prev  curr	ahead
 	
+	1	<-2	 	3		4		5
+	prev  curr	ahead
+	
+	1	<-2	 	3		4		5
+		curr	ahead
+				prev
+	
+	
+	1	<-2	 <-	 3		4		5
+		curr			ahead
+				prev
+				
+				
+	1	<-2	 <-	 3		4		5
+		curr			ahead
+				prev   curr
+				
+	1	<-2	 <-	 3		<-4		<-5
+		curr			       ahead
+				prev   curr
+	
+*/
+void rev(){
+		node* prev;
+		node* curr;
+		node* ahead;
+		node* newHead=(node*)malloc(sizeof(node));
+		
+		prev=head->next;
+		printf("%d(prev)\t",prev->data);
+		
+		curr=prev->next;
+		printf("%d(curr)\t",curr->data);
+		ahead=curr->next;
+		printf("%d(ahead)\t",ahead->data);
+		prev->next=NULL;
+		while(ahead->next!=NULL){
+			printf("\n===============\n");
+			curr->next=prev;
+			printf("%d(prev)\t",prev->data);
+			prev=ahead;
+			printf("%d(prev) %d(ahead)\t",prev->data,ahead->data);
+			ahead=prev->next;
+			printf("%d(ahead)\t",ahead->data);
+			prev->next=curr;
+			curr=ahead;
+			printf("%d(curr) %d(ahead)\t",curr->data,ahead->data);
+			ahead=curr->next;
+		}
+		ahead->next=curr;
+		curr->next=prev;
+		newHead->next=ahead;
+		
+		node* temp=newHead->next;
+
+	int i=0;
+	while(temp->next!=NULL){
+		printf("%d->",temp->data);
+		temp=temp->next;
+		
+	}
+	printf("%d->NULL",temp->data);
 }
 
-void rev(){
-	node* prev;
-	node* curr;
-	node* nextnode;
-	node* temp;
-	prev=head->next;
+void reverse(){
 	
-	while(nextnode->next!=NULL){
-		printf("\n=========in loop========\n");
-		curr=prev->next;
-		nextnode=curr->next;
-		temp=nextnode->next;
-		nextnode->next=curr;
+	if(n>2){
+		node* prev=head->next;
+		node* curr=prev->next;
+		node* temp=curr->next;
+		prev->next=NULL;
+		while(temp->next!=NULL){
+			curr->next=prev;
+			prev=curr;
+			curr=temp;
+			temp=curr->next;
+		}
 		curr->next=prev;
-		prev=temp;
+		temp->next=curr;
+		head->next=temp;
+	
+	}else{
+	//	printf("=====hello=====");
+		node* prev=head->next;
+		//node* curr=prev->next;
+		head->next=prev->next;
+		head->next->next=prev;
+		prev->next=NULL;
 	}
 	
 	display();
